@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Свадебное приглашение</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400&display=swap');
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --cream: #fdf8f2;
+      --gold: #b89a6a;
+      --gold-light: #d4b98a;
+      --dark: #2c2522;
+      --text: #4a3f38;
+    }
+
+    body {
+      background-color: var(--cream);
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    /* --- Decorative background --- */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border: 1px solid rgba(184,154,106,0.25);
+      pointer-events: none;
+    }
+    body::before {
+      inset: 18px;
+    }
+    body::after {
+      inset: 24px;
+    }
+
+    .page {
+      text-align: center;
+      padding: 60px 32px;
+      max-width: 560px;
+      width: 100%;
+      animation: fadeIn 1.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .ornament {
+      color: var(--gold);
+      font-size: 1.4rem;
+      letter-spacing: 0.3em;
+      margin-bottom: 28px;
+      display: block;
+    }
+
+    .invite-label {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .names {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(2.8rem, 8vw, 4.2rem);
+      line-height: 1.15;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    .amp {
+      color: var(--gold);
+      font-size: 0.75em;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 28px auto;
+      max-width: 320px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-light), transparent);
+    }
+    .divider-icon {
+      color: var(--gold);
+      font-size: 1rem;
+    }
+
+    .date-block {
+      margin-bottom: 8px;
+    }
+    .date-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.1rem, 4vw, 1.4rem);
+      letter-spacing: 0.18em;
+      color: var(--dark);
+    }
+    .date-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 4px;
+    }
+
+    .venue {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--text);
+      margin-top: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .message {
+      font-size: 0.78rem;
+      line-height: 1.9;
+      color: var(--text);
+      margin: 28px auto 36px;
+      max-width: 400px;
+      letter-spacing: 0.03em;
+    }
+
+    /* --- CTA Button --- */
+    .btn-accept {
+      display: inline-block;
+      padding: 14px 44px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      outline: none;
+    }
+    .btn-accept:hover {
+      background: var(--gold);
+      color: #fff;
+    }
+
+    /* --- Modal overlay --- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(44,37,34,0.55);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s, visibility 0.35s;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--cream);
+      max-width: 420px;
+      width: 100%;
+      padding: 48px 40px 40px;
+      text-align: center;
+      position: relative;
+      transform: translateY(30px);
+      transition: transform 0.35s;
+    }
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--gold);
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+    .modal-close:hover { color: var(--dark); }
+
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.8rem;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+    .modal-sub {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .form-group input {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--gold-light);
+      background: transparent;
+      padding: 8px 2px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--dark);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus {
+      border-bottom-color: var(--gold);
+    }
+    .form-group input::placeholder {
+      color: rgba(74,63,56,0.35);
+      font-style: italic;
+    }
+
+    .btn-submit {
+      margin-top: 28px;
+      display: inline-block;
+      padding: 13px 44px;
+      border: 1px solid var(--gold);
+      background: var(--gold);
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      outline: none;
+      width: 100%;
+    }
+    .btn-submit:hover:not(:disabled) {
+      background: transparent;
+      color: var(--gold);
+    }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    /* --- Success state --- */
+    .success-msg {
+      display: none;
+      padding: 12px 0;
+    }
+    .success-msg .check {
+      font-size: 2rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .success-msg p {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--dark);
+      line-height: 1.7;
+    }
+
+    /* --- Error hint --- */
+    .error-hint {
+      font-size: 0.6rem;
+      color: #b05050;
+      letter-spacing: 0.15em;
+      margin-top: 16px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="page">
+    <span class="ornament">✦ ✦ ✦</span>
+    <p class="invite-label">Приглашение на свадьбу</p>
+
+    <h1 class="names">
+      Иван<br>
+      <span class="amp">&amp;</span><br>
+      Мария
+    </h1>
+
+    <div class="divider"><span class="divider-icon">❧</span></div>
+
+    <div class="date-block">
+      <p class="date-num">14 · VI · 2026</p>
+      <p class="date-label">Дата торжества</p>
+    </div>
+    <p class="venue">Ресторан «Белый зал», Москва</p>
+
+    <div class="divider"><span class="divider-icon">❧</span></div>
+
+    <p class="message">
+      Мы с радостью приглашаем вас разделить<br>
+      с нами этот особенный день.<br>
+      Ваше присутствие станет для нас<br>
+      лучшим подарком.
+    </p>
+
+    <button class="btn-accept" id="openModal">Принять приглашение</button>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <button class="modal-close" id="closeModal" aria-label="Закрыть">&times;</button>
+
+      <div id="formContent">
+        <h2 class="modal-title" id="modalTitle">Подтверждение</h2>
+        <p class="modal-sub">Мы будем рады видеть вас</p>
+
+        <form id="rsvpForm" novalidate>
+          <div class="form-group">
+            <label for="firstName">Имя</label>
+            <input type="text" id="firstName" name="firstName" placeholder="Введите имя" autocomplete="given-name" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Фамилия</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Введите фамилию" autocomplete="family-name" required />
+          </div>
+
+          <p class="error-hint" id="errorHint">Пожалуйста, заполните оба поля</p>
+
+          <button type="submit" class="btn-submit" id="submitBtn">Приду</button>
+        </form>
+      </div>
+
+      <div class="success-msg" id="successMsg">
+        <span class="check">✦</span>
+        <p>Спасибо!<br>Мы очень рады,<br>что вы будете с нами.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhKk3GGLz01PSvRH9P25HluvaeTyouZp4wdwxUY6TozxjBC-L2dyisscKVS9gdJVmJZg/exec';
+
+    const overlay   = document.getElementById('modalOverlay');
+    const openBtn   = document.getElementById('openModal');
+    const closeBtn  = document.getElementById('closeModal');
+    const form      = document.getElementById('rsvpForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorHint = document.getElementById('errorHint');
+    const formContent  = document.getElementById('formContent');
+    const successMsg   = document.getElementById('successMsg');
+
+    function openModal() {
+      overlay.classList.add('active');
+      document.getElementById('firstName').focus();
+    }
+
+    function closeModal() {
+      overlay.classList.remove('active');
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName  = document.getElementById('lastName').value.trim();
+
+      if (!firstName || !lastName) {
+        errorHint.style.display = 'block';
+        return;
+      }
+
+      errorHint.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправка…';
+
+      try {
+        const params = new URLSearchParams({ firstName, lastName });
+        await fetch(`${SCRIPT_URL}?${params}`, { method: 'GET', mode: 'no-cors' });
+      } catch (_) {
+        // no-cors: response is opaque, errors are network-level only
+      }
+
+      formContent.style.display = 'none';
+      successMsg.style.display  = 'block';
+
+      // Reset form for next open
+      form.reset();
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Приду';
+    });
+
+    // Re-show form when modal re-opened after success
+    openBtn.addEventListener('click', () => {
+      formContent.style.display = 'block';
+      successMsg.style.display  = 'none';
+    });
+  </script>
+</body>
+</html>
