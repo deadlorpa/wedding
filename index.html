@@ -34,18 +34,16 @@
       overflow-x: hidden;
     }
 
-    /* --- Decorative background --- */
-    body::before, body::after {
-      content: '';
+    /* --- Decorative frame overlay --- */
+    .page-frame {
       position: fixed;
-      border: 1px solid rgba(184,154,106,0.25);
+      inset: 0;
+      border: 24px solid var(--cream);
+      outline: 1px solid var(--gold-light);
+      outline-offset: -18px;
+      box-shadow: inset 0 0 0 1px rgba(184,154,106,0.25);
       pointer-events: none;
-    }
-    body::before {
-      inset: 18px;
-    }
-    body::after {
-      inset: 24px;
+      z-index: 9999;
     }
 
     .page {
@@ -92,6 +90,25 @@
     .amp {
       color: var(--gold);
       font-size: 0.75em;
+    }
+
+    /* --- Portrait photo --- */
+    .portrait-wrap {
+      margin: 0 auto;
+      width: clamp(200px, 55vw, 300px);
+      padding: 14px;
+    }
+
+    .portrait-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
+      filter: sepia(12%) brightness(1.05) contrast(0.97);
+      box-shadow:
+        0 0 0 1px var(--gold-light),
+        0 0 0 7px var(--cream),
+        0 0 0 8px rgba(184,154,106,0.4);
     }
 
     .divider {
@@ -320,6 +337,8 @@
 </head>
 <body>
 
+  <div class="page-frame"></div>
+
   <main class="page">
     <span class="ornament">✦ ✦ ✦</span>
     <p class="invite-label">Приглашение на свадьбу</p>
@@ -329,6 +348,12 @@
       <span class="amp">&amp;</span><br>
       Елизавета
     </h1>
+
+    <div class="divider"><span class="divider-icon">❧</span></div>
+
+    <figure class="portrait-wrap">
+      <img src="images/IMG_6355.png" alt="Игорь и Елизавета" />
+    </figure>
 
     <div class="divider"><span class="divider-icon">❧</span></div>
 
@@ -360,13 +385,14 @@
 
         <form id="rsvpForm" novalidate>
           <div class="form-group">
-            <label for="firstName">Имя</label>
-            <input type="text" id="firstName" name="firstName" placeholder="Введите имя" autocomplete="given-name" required />
-          </div>
-          <div class="form-group">
             <label for="lastName">Фамилия</label>
             <input type="text" id="lastName" name="lastName" placeholder="Введите фамилию" autocomplete="family-name" required />
           </div>
+          <div class="form-group">
+            <label for="firstName">Имя</label>
+            <input type="text" id="firstName" name="firstName" placeholder="Введите имя" autocomplete="given-name" required />
+          </div>
+
 
           <p class="error-hint" id="errorHint">Пожалуйста, заполните оба поля</p>
 
